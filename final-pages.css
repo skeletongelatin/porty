@@ -419,22 +419,24 @@ body {
     .about-grid {
         grid-template-columns: 1fr;
         grid-template-rows: auto;
+        display: flex;
+        flex-direction: column;
     }
     
-    .bio-box {
-        grid-column: 1;
-        grid-row: auto;
-    }
-    
+    /* Image first on mobile */
     .image-box {
-        grid-column: 1;
-        grid-row: auto;
+        order: 1;
         min-height: 250px;
     }
     
+    /* Bio second */
+    .bio-box {
+        order: 2;
+    }
+    
+    /* Skills third */
     .disciplines-box {
-        grid-column: 1;
-        grid-row: auto;
+        order: 3;
     }
 }
 

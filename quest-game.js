@@ -13,7 +13,7 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 function resizeCanvas() {
     if (isMobile) {
         // Mobile: maintain 800x600 (4:3) aspect ratio
-        const controlsHeight = 140; // Height of touch controls bar
+        const controlsHeight = 180; // Height of touch controls bar
         const backButtonHeight = 50; // Space for back button
         const padding = 20; // Side padding
         
@@ -470,21 +470,23 @@ function updatePlayer(deltaTime) {
         player.moving = true;
     }
 
-    // Touch input (mobile joystick)
+    // Touch input (mobile joystick) - 4-way only
     if (touchControls.joystick.active) {
         const jdx = touchControls.joystick.currentX - touchControls.joystick.startX;
         const jdy = touchControls.joystick.currentY - touchControls.joystick.startY;
         const deadzone = 10;
 
         if (Math.abs(jdx) > deadzone || Math.abs(jdy) > deadzone) {
-            const magnitude = Math.sqrt(jdx * jdx + jdy * jdy);
-            dx = jdx / magnitude;
-            dy = jdy / magnitude;
-
-            // Set direction based on dominant axis
+            // Only move in dominant direction (no diagonals)
             if (Math.abs(jdx) > Math.abs(jdy)) {
+                // Horizontal movement
+                dx = jdx > 0 ? 1 : -1;
+                dy = 0;
                 player.direction = jdx > 0 ? 'right' : 'left';
             } else {
+                // Vertical movement
+                dx = 0;
+                dy = jdy > 0 ? 1 : -1;
                 player.direction = jdy > 0 ? 'down' : 'up';
             }
             player.moving = true;
@@ -692,8 +694,8 @@ function drawClayUI(deltaTime) {
     }
     
     // Scale UI for mobile
-    const uiScale = isMobile ? 0.7 : 1;
-    const leftMargin = isMobile ? 10 : 30;
+    const uiScale = isMobile ? 0.5 : 1;
+    const leftMargin = isMobile ? 5 : 30;
     const topMargin = isMobile ? 5 : 10;
     
     // Draw torches (top corners)

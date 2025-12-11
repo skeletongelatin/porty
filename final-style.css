@@ -133,7 +133,7 @@ body::after {
 /* ========== 3D LOGO AREA ========== */
 .logo-area {
     position: relative;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     min-height: 300px;
     display: flex;
     flex-direction: column;
@@ -230,10 +230,10 @@ body::after {
 /* ========== SWORD ANIMATION ========== */
 .sword {
     position: absolute;
-    width: 800px;
+    width: 1000px;
     height: auto;
     top: 60%;
-    left: -1200px;
+    left: -1400px;
     opacity: 0;
     transform: translateY(-50%) rotate(-25deg);
     filter: drop-shadow(0 0 20px rgba(218, 165, 32, 0.8))
@@ -244,7 +244,7 @@ body::after {
 
 @keyframes sword-pierce {
     0% {
-        left: -1200px;
+        left: -1400px;
         top: 60%;
         opacity: 1;
         transform: translateY(-50%) rotate(-25deg);
@@ -428,9 +428,13 @@ body::after {
     .logo-3d {
         max-width: 90%;
     }
+    
+    .logo-area {
+        margin-bottom: 30px;
+    }
 
     .sword {
-        width: 200px;
+        width: 300px;
     }
 
     .subtitle {
