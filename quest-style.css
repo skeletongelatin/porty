@@ -12,6 +12,9 @@ body {
     -webkit-touch-callout: none; /* Disable callout on iOS */
     -webkit-user-select: none;
     user-select: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 /* ========== INTRO TEXT CRAWL ========== */
@@ -95,13 +98,14 @@ body {
 /* ========== GAME CANVAS ========== */
 #gameCanvas {
     display: block;
-    margin: 10px auto 0;
+    margin: 0 auto;
     background: #1a2332;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
     max-width: 100%;
     height: auto;
+    position: relative;
 }
 
 /* ========== TOUCH CONTROLS (MOBILE) ========== */
@@ -322,12 +326,17 @@ body {
     body {
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        padding-top: 60px; /* Space for back button */
+        justify-content: space-between;
+        align-items: center;
+        padding: 50px 0 0 0;
     }
     
     #gameCanvas {
-        margin-top: 0;
+        flex-shrink: 0;
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 200px); /* Leave room for controls and back button */
+        width: auto;
+        height: auto;
     }
     
     .intro-title {
@@ -378,6 +387,7 @@ body {
     .touch-controls {
         height: 140px;
         padding: 0 15px 15px;
+        flex-shrink: 0;
     }
     
     .joystick-area {
@@ -403,6 +413,14 @@ body {
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 45px 0 0 0;
+    }
+    
+    #gameCanvas {
+        max-height: calc(100vh - 180px);
+    }
+    
     .intro-title {
         font-size: 1rem;
     }

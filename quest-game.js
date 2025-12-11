@@ -12,19 +12,32 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 // Responsive canvas sizing - maintain 4:3 aspect ratio
 function resizeCanvas() {
     if (isMobile) {
-        // Mobile: maintain 800x600 (4:3) aspect ratio, fit to screen width
-        const maxWidth = Math.min(window.innerWidth - 20, 800);
-        const aspectRatio = 600 / 800; // 0.75 (4:3)
-        canvas.width = maxWidth;
-        canvas.height = maxWidth * aspectRatio;
+        // Mobile: maintain 800x600 (4:3) aspect ratio
+        const controlsHeight = 140; // Height of touch controls bar
+        const backButtonHeight = 50; // Space for back button
+        const padding = 20; // Side padding
         
-        // Also center the canvas
-        canvas.style.marginTop = '10px';
+        const availableWidth = window.innerWidth - padding;
+        const availableHeight = window.innerHeight - controlsHeight - backButtonHeight;
+        
+        const aspectRatio = 600 / 800; // 0.75 (4:3)
+        
+        // Calculate size based on available space
+        let width = availableWidth;
+        let height = width * aspectRatio;
+        
+        // If height is too tall, scale based on height instead
+        if (height > availableHeight) {
+            height = availableHeight;
+            width = height / aspectRatio;
+        }
+        
+        canvas.width = Math.min(width, 800);
+        canvas.height = canvas.width * aspectRatio;
     } else {
         // Desktop: fixed size
         canvas.width = 800;
         canvas.height = 600;
-        canvas.style.marginTop = '0';
     }
 }
 
