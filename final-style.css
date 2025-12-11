@@ -434,7 +434,8 @@ body::after {
     }
 
     .sword {
-        width: 500px;
+        width: 650px;
+        top: -50px;
     }
 
     .subtitle {
@@ -463,10 +464,7 @@ body::after {
     .logo-3d {
         max-width: 100%;
     }
-
-    .sword {
-        width: 150px;
-    }
+}
 
     .subtitle {
         font-size: 0.45rem;
