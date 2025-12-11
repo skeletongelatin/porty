@@ -9,18 +9,22 @@ const ctx = canvas.getContext('2d');
 // ========== MOBILE DETECTION & CANVAS SETUP ==========
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
 
-// Responsive canvas sizing
+// Responsive canvas sizing - maintain 4:3 aspect ratio
 function resizeCanvas() {
     if (isMobile) {
-        // Mobile: fit to screen with some padding
-        const maxWidth = Math.min(window.innerWidth - 20, 600);
-        const maxHeight = Math.min(window.innerHeight - 100, 450);
+        // Mobile: maintain 800x600 (4:3) aspect ratio, fit to screen width
+        const maxWidth = Math.min(window.innerWidth - 20, 800);
+        const aspectRatio = 600 / 800; // 0.75 (4:3)
         canvas.width = maxWidth;
-        canvas.height = maxHeight;
+        canvas.height = maxWidth * aspectRatio;
+        
+        // Also center the canvas
+        canvas.style.marginTop = '10px';
     } else {
         // Desktop: fixed size
         canvas.width = 800;
         canvas.height = 600;
+        canvas.style.marginTop = '0';
     }
 }
 
@@ -334,14 +338,18 @@ if (isMobile) {
         if (!touchControls.joystick.active) {
             touchControls.joystick.active = true;
             touchControls.joystick.identifier = touch.identifier;
-            touchControls.joystick.startX = touch.clientX;
-            touchControls.joystick.startY = touch.clientY;
+            
+            // Get joystick area bounds
+            const rect = joystickArea.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            touchControls.joystick.startX = centerX;
+            touchControls.joystick.startY = centerY;
             touchControls.joystick.currentX = touch.clientX;
             touchControls.joystick.currentY = touch.clientY;
 
-            joystickBase.style.left = (touch.clientX - joystickArea.offsetLeft - 50) + 'px';
-            joystickBase.style.top = (touch.clientY - joystickArea.offsetTop - 50) + 'px';
-            joystickBase.style.opacity = '1';
+            joystickBase.classList.add('active');
         }
     });
 
@@ -374,7 +382,7 @@ if (isMobile) {
             if (touch.identifier === touchControls.joystick.identifier) {
                 touchControls.joystick.active = false;
                 touchControls.joystick.identifier = null;
-                joystickBase.style.opacity = '0.3';
+                joystickBase.classList.remove('active');
                 joystickStick.style.transform = 'translate(0, 0)';
                 break;
             }
