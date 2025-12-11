@@ -425,6 +425,14 @@ body::after {
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 768px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .page-container {
+        overflow-x: hidden;
+    }
+    
     .logo-3d {
         max-width: 90%;
     }
@@ -434,7 +442,7 @@ body::after {
     }
 
     .sword {
-        width: 550px;
+        width: 480px;
         top: 50%;
     }
 
