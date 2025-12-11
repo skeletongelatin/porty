@@ -695,28 +695,29 @@ function drawClayUI(deltaTime) {
     
     // Scale UI for mobile
     const uiScale = isMobile ? 0.5 : 1;
-    const leftMargin = isMobile ? 5 : 30;
+    const leftMargin = isMobile ? 5 : 20;
     const topMargin = isMobile ? 5 : 10;
     
-    // Draw torches (top corners)
+    // Draw torches (top corners) - lower position
+    const torchY = isMobile ? 60 : 90;
     const torchSprite = [sprites.ui.torchFlame1, sprites.ui.torchFlame2, sprites.ui.torchFlame3][torchAnim.frame];
     if (torchSprite && torchSprite.complete && torchSprite.naturalWidth > 0) {
-        ctx.drawImage(torchSprite, leftMargin, topMargin, 60 * uiScale, 80 * uiScale);
-        ctx.drawImage(torchSprite, canvas.width - (leftMargin + 60 * uiScale), topMargin, 60 * uiScale, 80 * uiScale);
+        ctx.drawImage(torchSprite, leftMargin, torchY, 60 * uiScale, 80 * uiScale);
+        ctx.drawImage(torchSprite, canvas.width - (leftMargin + 60 * uiScale), torchY, 60 * uiScale, 80 * uiScale);
     }
     
-    // Draw HP Label
-    const hpLabelY = isMobile ? 80 : 100;
+    // Draw HP Label - positioned below torches
+    const hpLabelY = torchY + (isMobile ? 90 : 100);
     if (sprites.ui.hpLabel.complete && sprites.ui.hpLabel.naturalWidth > 0) {
-        ctx.drawImage(sprites.ui.hpLabel, leftMargin - 10, hpLabelY, 40 * uiScale, 30 * uiScale);
+        ctx.drawImage(sprites.ui.hpLabel, leftMargin, hpLabelY, 40 * uiScale, 30 * uiScale);
     } else {
         ctx.fillStyle = '#ff6b7a';
         ctx.font = `${12 * uiScale}px "Press Start 2P"`;
-        ctx.fillText('HP', leftMargin, hpLabelY + 20);
+        ctx.fillText('HP', leftMargin + 5, hpLabelY + 20 * uiScale);
     }
     
     // Draw health bar frame
-    const healthBarX = leftMargin + 40;
+    const healthBarX = leftMargin + 40 * uiScale + 5;
     if (sprites.ui.healthBarFrame.complete && sprites.ui.healthBarFrame.naturalWidth > 0) {
         ctx.drawImage(sprites.ui.healthBarFrame, healthBarX, hpLabelY, 220 * uiScale, 30 * uiScale);
     } else {
@@ -730,27 +731,27 @@ function drawClayUI(deltaTime) {
     if (sprites.ui.healthBarFill.complete && sprites.ui.healthBarFill.naturalWidth > 0) {
         ctx.save();
         ctx.beginPath();
-        ctx.rect(healthBarX + 10, hpLabelY + 5, 200 * uiScale * healthPercent, 20 * uiScale);
+        ctx.rect(healthBarX + 10 * uiScale, hpLabelY + 5 * uiScale, 200 * uiScale * healthPercent, 20 * uiScale);
         ctx.clip();
-        ctx.drawImage(sprites.ui.healthBarFill, healthBarX + 10, hpLabelY + 5, 200 * uiScale, 20 * uiScale);
+        ctx.drawImage(sprites.ui.healthBarFill, healthBarX + 10 * uiScale, hpLabelY + 5 * uiScale, 200 * uiScale, 20 * uiScale);
         ctx.restore();
     } else {
         ctx.fillStyle = '#ff3333';
-        ctx.fillRect(healthBarX + 10, hpLabelY + 5, 200 * uiScale * healthPercent, 20 * uiScale);
+        ctx.fillRect(healthBarX + 10 * uiScale, hpLabelY + 5 * uiScale, 200 * uiScale * healthPercent, 20 * uiScale);
     }
     
     // Draw Score Label
-    const scoreLabelY = hpLabelY + 45;
+    const scoreLabelY = hpLabelY + 40 * uiScale;
     if (sprites.ui.scoreLabel.complete && sprites.ui.scoreLabel.naturalWidth > 0) {
-        ctx.drawImage(sprites.ui.scoreLabel, leftMargin - 10, scoreLabelY, 80 * uiScale, 30 * uiScale);
+        ctx.drawImage(sprites.ui.scoreLabel, leftMargin, scoreLabelY, 80 * uiScale, 30 * uiScale);
     } else {
         ctx.fillStyle = '#daa520';
         ctx.font = `${10 * uiScale}px "Press Start 2P"`;
-        ctx.fillText('SCORE', leftMargin, scoreLabelY + 20);
+        ctx.fillText('SCORE', leftMargin + 5, scoreLabelY + 20 * uiScale);
     }
     
     // Draw score frame
-    const scoreFrameX = leftMargin + 80;
+    const scoreFrameX = leftMargin + 80 * uiScale + 5;
     if (sprites.ui.scoreFrame.complete && sprites.ui.scoreFrame.naturalWidth > 0) {
         ctx.drawImage(sprites.ui.scoreFrame, scoreFrameX, scoreLabelY, 150 * uiScale, 40 * uiScale);
     } else {
