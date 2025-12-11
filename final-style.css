@@ -434,8 +434,8 @@ body::after {
     }
 
     .sword {
-        width: 650px;
-        top: -50px;
+        width: 550px;
+        top: 50%;
     }
 
     .subtitle {
