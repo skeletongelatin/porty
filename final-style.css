@@ -18,7 +18,7 @@ body {
     background: #050a15;
     color: #ffffff;
     overflow: hidden;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,6 +26,17 @@ body {
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
+}
+
+/* Allow scrolling on mobile for title screen */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: auto;
+        min-height: 100vh;
+        padding: 20px 0;
+    }
 }
 
 /* PS1 dithering effect overlay */

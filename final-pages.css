@@ -14,6 +14,14 @@
     animation: fade-in 1s ease-out;
 }
 
+/* Allow scrolling on all pages */
+body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    min-height: 100vh;
+    height: auto !important;
+}
+
 /* ========== PAGE HEADER ========== */
 .page-header {
     display: flex;
