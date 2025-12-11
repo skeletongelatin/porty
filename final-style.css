@@ -458,9 +458,25 @@ body::after {
     }
 
     .sword {
-        width: 100vw;
-        max-width: 480px;
+        width: 95vw;
+        max-width: 520px;
         top: 50%;
+        left: -95vw !important;
+    }
+    
+    @keyframes sword-pierce {
+        0% {
+            left: -95vw;
+            top: 60%;
+            opacity: 1;
+            transform: translateY(-50%) rotate(-25deg);
+        }
+        100% {
+            left: 50%;
+            top: 50%;
+            opacity: 1;
+            transform: translateY(-50%) translateX(-50%) rotate(0deg);
+        }
     }
 
     .subtitle {
