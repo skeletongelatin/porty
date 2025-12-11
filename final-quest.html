@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUEST - KYLO MONTEZ</title>
+    <link rel="stylesheet" href="final-style.css">
+    <link rel="stylesheet" href="quest-style.css">
+</head>
+<body>
+    <div class="crt-overlay"></div>
+    <div class="scanlines"></div>
+    
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- Intro Text Crawl -->
+    <div class="intro-crawl" id="introCrawl">
+        <div class="intro-content">
+            <h2 class="intro-title">THE QUEST BEGINS...</h2>
+            <p class="intro-text">
+                It is a time of great darkness. ...and weird little guys.
+            </p>
+            <p class="intro-text">
+                You are the last hero of Kylopia. Armed with your trusty blade EXPOSURE-BUR, you have found yourself plunged into the depths of depravity to vanquish these little weirdos.
+            </p>
+            <p class="intro-text">
+                You will not survive.
+            </p>
+            <div class="skip-hint">PRESS SPACE TO BEGIN</div>
+        </div>
+    </div>
+    
+    <!-- UI Overlay -->
+    <div class="game-ui">
+        <!-- Health Bar -->
+        <div class="health-container">
+            <div class="ui-label">HP</div>
+            <div class="health-bar">
+                <div class="health-fill" id="healthFill"></div>
+            </div>
+            <div class="health-text" id="healthText">100/100</div>
+        </div>
+        
+        <!-- Score -->
+        <div class="score-container">
+            <div class="ui-label">SCORE</div>
+            <div class="score-text" id="scoreText">0</div>
+        </div>
+        
+        <!-- Controls hint -->
+        <div class="controls-hint">
+            WASD/ARROWS: MOVE · SPACE: ATTACK · ESC: MENU
+        </div>
+        
+        <!-- Back button -->
+        <a href="final-index.html" class="quest-back">◄ EXIT QUEST</a>
+    </div>
+    
+    <!-- Game Over Screen -->
+    <div class="game-over-screen" id="gameOverScreen">
+        <div class="game-over-frame">
+            <h2 class="game-over-title">QUEST COMPLETE</h2>
+            <p class="final-score">FINAL SCORE: <span id="finalScore">0</span></p>
+            <div class="game-over-buttons">
+                <button class="game-button" id="restartBtn">TRY AGAIN</button>
+                <a href="final-index.html" class="game-button">RETURN HOME</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="quest-game.js"></script>
+</body>
+</html>
