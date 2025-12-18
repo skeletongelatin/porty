@@ -237,12 +237,42 @@ class Enemy {
             const absDx = Math.abs(dx);
             const absDy = Math.abs(dy);
 
+            // 4-way movement only - no diagonals
+            let moveX = 0;
+            let moveY = 0;
+            
             if (absDx > absDy) {
-                this.x += (dx / absDx) * this.speed * deltaTime;
+                moveX = (dx > 0 ? 1 : -1) * this.speed * deltaTime;
                 this.direction = dx > 0 ? 'right' : 'left';
             } else {
-                this.y += (dy / absDy) * this.speed * deltaTime;
+                moveY = (dy > 0 ? 1 : -1) * this.speed * deltaTime;
                 this.direction = dy > 0 ? 'down' : 'up';
+            }
+            
+            // Check collision with player before moving
+            const newX = this.x + moveX;
+            const newY = this.y + moveY;
+            const collisionDist = Math.sqrt((newX - player.x) ** 2 + (newY - player.y) ** 2);
+            const minDist = (this.size + player.size) / 2;
+            
+            if (collisionDist > minDist) {
+                // Check collision with other enemies
+                let canMove = true;
+                for (let other of enemies) {
+                    if (other !== this) {
+                        const otherDist = Math.sqrt((newX - other.x) ** 2 + (newY - other.y) ** 2);
+                        const minOtherDist = (this.size + other.size) / 2;
+                        if (otherDist < minOtherDist) {
+                            canMove = false;
+                            break;
+                        }
+                    }
+                }
+                
+                if (canMove) {
+                    this.x = newX;
+                    this.y = newY;
+                }
             }
 
             this.walkTimer += deltaTime * 1000;
@@ -497,8 +527,29 @@ function updatePlayer(deltaTime) {
     if (player.moving) {
         const length = Math.sqrt(dx * dx + dy * dy);
         if (length > 0) {
-            player.x += (dx / length) * player.speed * deltaTime;
-            player.y += (dy / length) * player.speed * deltaTime;
+            const moveX = (dx / length) * player.speed * deltaTime;
+            const moveY = (dy / length) * player.speed * deltaTime;
+            
+            // Calculate new position
+            const newX = player.x + moveX;
+            const newY = player.y + moveY;
+            
+            // Check collision with all enemies
+            let canMove = true;
+            for (let enemy of enemies) {
+                const distToEnemy = Math.sqrt((newX - enemy.x) ** 2 + (newY - enemy.y) ** 2);
+                const minDist = (player.size + enemy.size) / 2;
+                if (distToEnemy < minDist) {
+                    canMove = false;
+                    break;
+                }
+            }
+            
+            // Only move if no collision
+            if (canMove) {
+                player.x = newX;
+                player.y = newY;
+            }
         }
 
         // Walk animation
@@ -528,7 +579,7 @@ function playerAttack() {
         player.isAttacking = true;
         player.attackCooldown = player.attackDuration;
 
-        const attackRange = 100;
+        const attackRange = 60; // Reduced from 100
         enemies.forEach((enemy, index) => {
             const dx = enemy.x - player.x;
             const dy = enemy.y - player.y;
@@ -536,11 +587,20 @@ function playerAttack() {
 
             let inRange = false;
             if (distance <= attackRange) {
+                // Tighter directional check - enemy must be directly in front
                 switch (player.direction) {
-                    case 'up': if (dy < 30) inRange = true; break;
-                    case 'down': if (dy > -30) inRange = true; break;
-                    case 'left': if (dx < 30) inRange = true; break;
-                    case 'right': if (dx > -30) inRange = true; break;
+                    case 'up': 
+                        inRange = dy < 0 && dy > -attackRange && Math.abs(dx) < 35; 
+                        break;
+                    case 'down': 
+                        inRange = dy > 0 && dy < attackRange && Math.abs(dx) < 35; 
+                        break;
+                    case 'left': 
+                        inRange = dx < 0 && dx > -attackRange && Math.abs(dy) < 35; 
+                        break;
+                    case 'right': 
+                        inRange = dx > 0 && dx < attackRange && Math.abs(dy) < 35; 
+                        break;
                 }
 
                 if (inRange) {
