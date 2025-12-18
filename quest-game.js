@@ -233,45 +233,31 @@ class Enemy {
         const dy = player.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance > 10) {
+        // Stop when close enough to player
+        const stopDistance = (this.size + player.size) / 2 - 10;
+        
+        if (distance > stopDistance) {
             const absDx = Math.abs(dx);
             const absDy = Math.abs(dy);
 
-            // 4-way movement only - no diagonals
-            let moveX = 0;
-            let moveY = 0;
-            
-            if (absDx > absDy) {
-                moveX = (dx > 0 ? 1 : -1) * this.speed * deltaTime;
+            // 4-way movement only - stick to one axis with threshold
+            // This prevents "stair-stepping" diagonal appearance
+            if (absDx > absDy + 20) {
+                // Strongly prefer horizontal
+                this.x += (dx > 0 ? 1 : -1) * this.speed * deltaTime;
                 this.direction = dx > 0 ? 'right' : 'left';
-            } else {
-                moveY = (dy > 0 ? 1 : -1) * this.speed * deltaTime;
+            } else if (absDy > absDx + 20) {
+                // Strongly prefer vertical
+                this.y += (dy > 0 ? 1 : -1) * this.speed * deltaTime;
                 this.direction = dy > 0 ? 'down' : 'up';
-            }
-            
-            // Check collision with player before moving
-            const newX = this.x + moveX;
-            const newY = this.y + moveY;
-            const collisionDist = Math.sqrt((newX - player.x) ** 2 + (newY - player.y) ** 2);
-            const minDist = (this.size + player.size) / 2;
-            
-            if (collisionDist > minDist) {
-                // Check collision with other enemies
-                let canMove = true;
-                for (let other of enemies) {
-                    if (other !== this) {
-                        const otherDist = Math.sqrt((newX - other.x) ** 2 + (newY - other.y) ** 2);
-                        const minOtherDist = (this.size + other.size) / 2;
-                        if (otherDist < minOtherDist) {
-                            canMove = false;
-                            break;
-                        }
-                    }
-                }
-                
-                if (canMove) {
-                    this.x = newX;
-                    this.y = newY;
+            } else {
+                // When roughly equal, maintain current direction
+                if (this.direction === 'left' || this.direction === 'right') {
+                    this.x += (dx > 0 ? 1 : -1) * this.speed * deltaTime;
+                    this.direction = dx > 0 ? 'right' : 'left';
+                } else {
+                    this.y += (dy > 0 ? 1 : -1) * this.speed * deltaTime;
+                    this.direction = dy > 0 ? 'down' : 'up';
                 }
             }
 
@@ -285,8 +271,9 @@ class Enemy {
             this.moving = false;
         }
 
-        if (distance < 30) {
-            player.health -= 10 * deltaTime;
+        // Deal damage when touching player (increased range)
+        if (distance < 50) {
+            player.health -= 20 * deltaTime;
             if (player.health <= 0) {
                 gameOver();
             }
@@ -530,25 +517,23 @@ function updatePlayer(deltaTime) {
             const moveX = (dx / length) * player.speed * deltaTime;
             const moveY = (dy / length) * player.speed * deltaTime;
             
-            // Calculate new position
-            const newX = player.x + moveX;
-            const newY = player.y + moveY;
+            player.x += moveX;
+            player.y += moveY;
             
-            // Check collision with all enemies
-            let canMove = true;
+            // Push back enemies that player collides with
             for (let enemy of enemies) {
-                const distToEnemy = Math.sqrt((newX - enemy.x) ** 2 + (newY - enemy.y) ** 2);
-                const minDist = (player.size + enemy.size) / 2;
+                const distToEnemy = Math.sqrt((player.x - enemy.x) ** 2 + (player.y - enemy.y) ** 2);
+                const minDist = (player.size + enemy.size) / 2 - 5;
                 if (distToEnemy < minDist) {
-                    canMove = false;
-                    break;
+                    // Push enemy away from player
+                    const pushDx = enemy.x - player.x;
+                    const pushDy = enemy.y - player.y;
+                    const pushLength = Math.sqrt(pushDx * pushDx + pushDy * pushDy);
+                    if (pushLength > 0) {
+                        enemy.x += (pushDx / pushLength) * player.speed * deltaTime * 0.5;
+                        enemy.y += (pushDy / pushLength) * player.speed * deltaTime * 0.5;
+                    }
                 }
-            }
-            
-            // Only move if no collision
-            if (canMove) {
-                player.x = newX;
-                player.y = newY;
             }
         }
 
@@ -579,37 +564,40 @@ function playerAttack() {
         player.isAttacking = true;
         player.attackCooldown = player.attackDuration;
 
-        const attackRange = 60; // Reduced from 100
-        enemies.forEach((enemy, index) => {
+        const attackRange = 70; // Slightly increased from 60
+        
+        // Loop backwards to safely remove enemies
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            const enemy = enemies[i];
             const dx = enemy.x - player.x;
             const dy = enemy.y - player.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
             let inRange = false;
             if (distance <= attackRange) {
-                // Tighter directional check - enemy must be directly in front
+                // Directional check - enemy must be in front of player
                 switch (player.direction) {
                     case 'up': 
-                        inRange = dy < 0 && dy > -attackRange && Math.abs(dx) < 35; 
+                        inRange = dy < 0 && dy > -attackRange && Math.abs(dx) < 40; 
                         break;
                     case 'down': 
-                        inRange = dy > 0 && dy < attackRange && Math.abs(dx) < 35; 
+                        inRange = dy > 0 && dy < attackRange && Math.abs(dx) < 40; 
                         break;
                     case 'left': 
-                        inRange = dx < 0 && dx > -attackRange && Math.abs(dy) < 35; 
+                        inRange = dx < 0 && dx > -attackRange && Math.abs(dy) < 40; 
                         break;
                     case 'right': 
-                        inRange = dx > 0 && dx < attackRange && Math.abs(dy) < 35; 
+                        inRange = dx > 0 && dx < attackRange && Math.abs(dy) < 40; 
                         break;
                 }
 
                 if (inRange) {
-                    enemies.splice(index, 1);
+                    enemies.splice(i, 1);
                     game.score += 100;
                     updateScore();
                 }
             }
-        });
+        }
     }
 }
 
