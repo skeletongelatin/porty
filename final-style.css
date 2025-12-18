@@ -458,15 +458,14 @@ body::after {
     }
 
     .sword {
-        width: 95vw;
-        max-width: 520px;
-        top: 50%;
-        left: -95vw !important;
+        width: 520px;
+        max-width: 95vw;
+        animation: sword-pierce-mobile 0.5s cubic-bezier(0.1, 0.9, 0.2, 1) 1.5s forwards;
     }
     
-    @keyframes sword-pierce {
+    @keyframes sword-pierce-mobile {
         0% {
-            left: -95vw;
+            left: -600px;
             top: 60%;
             opacity: 1;
             transform: translateY(-50%) rotate(-25deg);
